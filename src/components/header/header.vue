@@ -8,7 +8,7 @@
       <div class="content_right">
         <input type="text" name="text" class="text_input">
         <img src="./../../assets/img/search@2x.png" alt="search" class="search_icon">
-        <span class="dep">管理员</span>
+        <span class="dep">xxx</span>
         <button type="button" class="button out_btn">退出登录</button>
       </div>
     </div>

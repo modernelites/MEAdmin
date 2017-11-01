@@ -1,250 +1,197 @@
 <template>
-  <div>
-    <my-header></my-header>
-    <div class="home">
-      <div class="content_wrapper">
-        <div class="content_left">
-          <ul class="list">
-            <li class="item" @click="select(0)" :class="{active:selectType===0}"><a href="#/home/banner">banner</a></li>
-            <li class="item" @click="select(1)" :class="{active:selectType===1}"><a href="#/home/course">课程列表</a></li>
-            <li class="item" @click="select(2)" :class="{active:selectType===2}"><a href="#/home/recommendCourse">推荐课程</a></li>
-            <li class="item" @click="select(3)" :class="{active:selectType===3}"><a href="#/home/service">客服</a></li>
-            <li class="item" @click="select(4)" :class="{active:selectType===4}"><a href="#/home/organization">子机构</a></li>
-            <li class="item" @click="select(5)" :class="{active:selectType===5}"><a href="#/home/lecturerManage">讲师管理</a></li>
-            <li class="item" @click="select(6)" :class="{active:selectType===6}"><a href="#/home/publicNumber">公众号管理</a></li>
-            <li class="item" @click="select(7)" :class="{active:selectType===7}"><a href="#/home/about">关于我们</a></li>
-            <li class="item" @click="select(8)" :class="{active:selectType===8}"><a href="#/home/moreFile">多媒体文件</a></li>
-            <li class="item" @click="select(9)" :class="{active:selectType===9}"><a href="#/home/ideaFeedback">意见反馈管理</a></li>
-          </ul>
-        </div>
-        <div class="content_right">
-          <router-view></router-view>
-        </div>
+  <div class="home-wrap">
+    <div class="logo">
+      <img src="../../assets/img/logo@2x.png" alt="">
+      <span>摩英官网后台管理系统</span>
+    </div>
+    <div class="login">
+      <div class="header">
+        <ul id="status" v-for="item in list" @click="loginType">
+          <li @click="setStatus(item.index)" :class="{'active':status === item.index}">{{item.value}}</li>
+        </ul>
+      </div>
+      <div class="content">
+        <form action="">
+          <input type="text" placeholder="账号">
+          <input type="text" placeholder="密码">
+          <button @click.prevent="login()">登录</button>
+        </form>
       </div>
     </div>
   </div>
 </template>
+
 <script>
-import myHeader from '@/components/header/header';
+import Vue from "vue";
 export default {
-  name: 'hello',
+  name: "",
   data() {
     return {
-      selectType: 0
-    }
+      status: '0',
+      // type: 0,
+      list: [
+        {
+          value: "行政",
+          index: 0
+        },
+        {
+          value: "管理",
+          index: 1
+        },
+        {
+          value: "教学",
+          index: 2
+        }
+      ]
+    };
   },
-  components: {
-    myHeader: myHeader
+  mounted(){
+    this.status =0;
   },
+  // activated() {
+  //   this.status=0;
+  //   },
   methods: {
-    select(type) {
-      this.selectType = type;
+    loginType: function(e) {
+      console.log(e);
+      let statusString = e.target.innerHTML;
+      switch (statusString) {
+        case "行政":
+          status = 0;
+          break;
+        case "管理":
+          status = 1;
+          break;
+        case "教学":
+          status = 2;
+      }
     },
-    selectUrl() {
-      let url = window.location.href;
-      if (url.indexOf('banner') > 0) {
-        this.selectType = 0;
+    setStatus(index) {
+      this.status = index;
+    },
+    login() {
+      let url = "";
+      switch (status) {
+        case "1":
+          url = "/management";
+          break;
+        case "2":
+          url = "/teaching";
+          break;
+        default:
+          url = "/administration";
       }
-      if (url.indexOf('course') > 0) {
-        this.selectType = 1
-      }
-      if (url.indexOf('recommendCourse') > 0) {
-        this.selectType = 2
-      }
-      if (url.indexOf('service') > 0) {
-        this.selectType = 3
-      }
-      if (url.indexOf('organization') > 0) {
-        this.selectType = 4
-      }
-      if (url.indexOf('lecturerManage') > 0) {
-        this.selectType = 5
-      }
-      if (url.indexOf('publicNumber') > 0) {
-        this.selectType = 6
-      }
-      if (url.indexOf('about') > 0) {
-        this.selectType = 7
-      }
-      if (url.indexOf('moreFile') > 0) {
-        this.selectType = 8
-      }
-      if (url.indexOf('ideaFeedback') > 0) {
-        this.selectType = 9
-      }
+      this.$router.push({
+        path: url
+      });
     }
-  },
-  mounted() {
-    this.selectUrl();
   }
-}
-
+};
 </script>
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style>
-.home {
-  /*max-width: 1440px;*/
-  margin: 0 auto;
-}
-
-.home .content_wrapper {
-  display: flex;
-  height: calc(100vh - 80px);
-}
-
-.home .content_wrapper .content_left {
-  flex: 0 0 200px;
-  background: linear-gradient(180deg, #008ae5, #078ee7);
-  padding-top: 44px;
-}
-
-.content_left .list .item a {
-  display: block;
-  height: 60px;
-  line-height: 60px;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 300;
-  text-align: center;
-  border-left: 8px solid transparent;
-  transition: all.3s ease;
-}
-
-.content_left .list .item.active a {
-  border-left: 8px solid #063a5d;
-  background: #0c75ba;
-}
-
-.content_left .list .item:hover a {
-  border-left: 8px solid #063a5d;
-  background: #0c75ba;
-}
-
-.home .content_wrapper .content_right {
-  flex: 1;
-}
-
-.home .content_right {
-  background: #efefef;
-}
-
-.conmon_nav {
-  height: 44px;
-
-  padding: 0 20px;
-  border-bottom: 4px solid #dedddd;
-}
-
-.conmon_nav .common_list {
-  float: left;
-  line-height: 44px;
-}
-
-.conmon_nav .right_area {
-  float: right;
-  font-size: 0;
-}
-
-.conmon_nav .right_area .common_icon {
-  padding-top: 20px;
-}
-
-.common_icon {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-}
-
-.conmon_nav .common_icon {
-  margin-left: 12px;
-}
-
-.cmomon_add_icon {
-  background: url('./../../assets/img/add.png') no-repeat center;
-}
-
-.cmomon_mod_icon {
-  background: url('./../../assets/img/modification.png') no-repeat center;
-}
-
-.cmomon_del_icon {
-  background: url('./../../assets/img/delete@2x.png') no-repeat center;
-}
-
-.conmon_nav .common_list .common_item {
-  float: left;
-  position: relative;
-}
-
-.conmon_nav .common_list .common_item+.common_item {
-  margin-left: 20px;
-}
-
-.conmon_nav .common_list .common_item a {
-  display: block;
-  font-size: 18px;
-  color: #000;
-}
-
-.conmon_nav .common_list .common_item.active:after {
-  content: ' ';
-  display: block;
-  width: 100%;
+.home-wrap {
+  /* background: url("../../assets/img/"); */
+  background-color: rgb(48, 161, 236);
   position: absolute;
-  left: 0;
-  bottom: 0;
-  height: 6px;
-  background: #068de7;
-}
-
-.conmon_nav .common_list .common_item.active a {
-  color: #068de7;
-}
-
-.common_table {
-  padding: 20px;
-}
-
-.common_table .table {
+  height: 100%;
   width: 100%;
 }
 
-.common_table tr {
-  height: 40px;
-  line-height: 40px;
-  padding-left: 12px;
+.home-wrap .logo {
+  width: 100%;
+  height: 300px;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
 }
 
-.common_table tr th {
-  height: 40px;
-  line-height: 40px;
-  background: #a4c8df;
-  text-align: left;
+.home-wrap .logo img {
+  width: 100px;
+  position: fixed;
+  top: 100px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
-.common_table tr th:nth-last-child(1),
-.common_table tr th:nth-last-child(2) {
-  background: #efefef;
+.home-wrap .logo span {
+  color: #fff;
+  position: relative;
+  top: 226px;
+  font-size: 22px;
 }
 
-.common_table tr td:nth-last-child(1),
-.common_table tr td:nth-last-child(2) {
-  background: #efefef;
+.home-wrap .login {
+  width: 447px;
+  height: 348px;
+  /* background-color: #fff; */
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
-.common_table tr th:nth-child(1),
-.common_table tr td:nth-child(1) {
-  padding-left: 12px;
+.home-wrap .login .header {
+  font-size: 20px;
+  background-color: transparent;
 }
 
-.common_table tbody tr:nth-child(odd) {
+.home-wrap .login .header li {
+  float: left;
+  width: 149px;
+  text-align: center;
+  height: 68px;
+  line-height: 68px;
+  color: #747474;
+  background: -webkit-radial-gradient(rgb(255, 255, 255), rgb(213, 213, 213));
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  cursor: pointer;
+}
+
+.home-wrap .login .header li:hover {
+  color: rgb(48, 161, 236);
   background: #fff;
 }
 
-.common_table tbody .common_icon {
-  display: block;
-  width: 100%;
-  min-width: 14px;
+.home-wrap .login .header li.active {
+  color: rgb(48, 161, 236);
+  background: #fff;
 }
 
+.home-wrap .login .content {
+  width: 100%;
+  height: 280px;
+  background-color: #fff;
+  margin-top: 68px;
+  padding: 24px;
+}
+
+.home-wrap .login .content input {
+  width: 372px;
+  height: 56px;
+  display: block;
+  border-radius: 10px;
+  margin: 0 auto;
+  margin-bottom: 24px;
+  border: none;
+  box-shadow: 2px 2px 2px 2px rgb(232, 232, 232) inset;
+  padding-left: 20px;
+  outline: none;
+}
+
+.home-wrap .login .content button {
+  display: block;
+  width: 170px;
+  height: 56px;
+  background-color: #018be5;
+  color: #fff;
+  border-radius: 10px;
+  border: none;
+  margin: 0 auto;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+}
 </style>
