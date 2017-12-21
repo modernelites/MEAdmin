@@ -68,6 +68,7 @@ export default {
     },
     setStatus(index) {
       this.status = index;
+
     },
     login() {
       let url = "";

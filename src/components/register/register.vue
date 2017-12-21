@@ -28,6 +28,7 @@ export default {
         response = response.body;
         this.CourseType_Items = response.Data;
         this.SelectCourseType = response.Data[0];
+        console.log(this.CourseType_Items);
       }, function () {
         console.log('请求发送失败');
       });
@@ -263,14 +264,19 @@ export default {
   font-size: 16px;
   color: #656565;
 }
-
+.register_p .info_box .grade_label .grade_area{
+  margin-left: 82px;
+}
 .register_p .info_box .common_label {
   display: block;
   margin-bottom: 38px;
   font-size: 16px;
   color: #656565;
+  height: 46px;
 }
-
+.register_p .info_box .common_label .sel{
+  vertical-align: middle;
+}
 .register_p .info_box label .common_span {
   display: inline-block;
   width: 90px;
@@ -467,6 +473,8 @@ export default {
 
 .register_p .item_bottom_con .phone_area {
   display: inline-block;
+  margin-bottom: 10px;
+  margin-left: 100px;
 }
 
 .register_p .item_bottom_con i {
@@ -557,10 +565,7 @@ export default {
 }
 
 .register_p .add_wrapper .origin {
-  margin: 0 16px;
-}
-
-.register_p .add_wrapper .origin {
+    margin: 0 16px;
   width: 16px;
   height: 16px;
   vertical-align: middle;
@@ -901,6 +906,7 @@ export default {
 
 .register_p .info_box .sex_label .sel {
   margin-left: 100px;
+  margin-top: -30px;
 }
 
 .modification_data_p

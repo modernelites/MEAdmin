@@ -113,7 +113,7 @@
     },
     mounted() {
       this.fileUploadInit();
-      console.log(this.FilePath)
+    //   console.log(this.FilePath)
     }
   }
 

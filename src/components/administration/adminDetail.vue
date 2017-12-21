@@ -1,7 +1,7 @@
 <template>
   <div class="common_wrapper">
     <caption class="table_title">{{courseID}}</caption>
-    <el-table :data="tableData" border style="width: 80%" stripe>
+    <el-table :data="tableData" border style="width: 80%" stripe  @selection-change="selectChange">
       <el-table-column fixed type="selection"
       width="55">
       </el-table-column>
@@ -66,7 +66,7 @@
         courseID: "0",
         playType:true,
         tableData: [{
-          index:'1',
+            index:'1',
             date: "2016-05-03",
             name: "王小虎",
             province: "上海",
@@ -101,7 +101,8 @@
             address: "上海市普陀区金沙江路 1518 弄",
             zip: 200333
           }
-        ]
+        ],
+        multipleSelection:[]
       };
     },
     mounted() {
@@ -120,6 +121,16 @@
     methods:{
       show:function(msg){
         console.log(msg);
+        if (this.multipleSelection[0] === undefined) {
+            console.log('no one');
+        } else{
+            console.log(this.multipleSelection[0].index);
+        }
+      },
+      selectChange:function(val){
+        this.multipleSelection = val;
+        console.log(this.multipleSelection);
+        // console.log(this.multipleSelection[0].name);
       }
     }
   };

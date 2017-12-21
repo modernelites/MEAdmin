@@ -28,7 +28,7 @@
       }
       editor.customConfig.uploadImgShowBase64 = true;
       editor.create()
-      editor.txt.html(this.Brief);
+      // editor.txt.html(this.Brief);
     },
     watch: {
       // 通过这种语法来watch就行，文档里有。。。看需求，还可以直接watch data，使用deep:true来深度观察

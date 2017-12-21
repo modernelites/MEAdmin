@@ -14,6 +14,7 @@ import organization from '@/components/organization/organization';
 import management from '@/components/management/management';
 import administration from '@/components/administration/administration';
 import teaching from '@/components/teaching/teaching';
+import wonderfulImage from '@/components/wonderfulImage/wonderfulImage'
 import $ from 'jquery'
 Vue.use(Router)
 
@@ -83,6 +84,9 @@ export default new Router({
         }, {
           path: 'organization',
           component: organization
+        },{
+          path:'wonderfulImage',
+          component:wonderfulImage
         }
       ]
     }
