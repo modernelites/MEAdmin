@@ -112,6 +112,8 @@
   .home {
     /*max-width: 1440px;*/
     margin: 0 auto;
+    /* height: 100%; */
+    /* overflow: auto; */
   }
 
   .home .content_wrapper {

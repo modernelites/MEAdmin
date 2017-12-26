@@ -3,14 +3,14 @@
     <div class="conmon_nav">
       <div class="right_area">
         <a href="javascript:;" class="cmomon_add_icon common_icon" @click="play=true" />
-        <a href="javascript:;" class="cmomon_mod_icon common_icon" />
-        <a href="javascript:;" class="cmomon_del_icon common_icon" @click="deleteTypeMul"/>
+        <!-- <a href="javascript:;" class="cmomon_mod_icon common_icon" />
+        <a href="javascript:;" class="cmomon_del_icon common_icon" @click="deleteTypeMul"/> -->
       </div>
     </div>
     <div class="common_wrapper">
       <div class="common_table">
         <table class="table">
-          <thead>
+          <thead> 
             <tr>
               <th>
                 <input type="checkbox" name="checkbox">
@@ -26,14 +26,16 @@
               <td>
                 <input type="checkbox" name="imgTypeName" :value="item.ImgTypeID" >
               </td>
-              <td>{{item.ImgTypeName}}</td>
+              <!-- <td @click="imgDetail(item.ImgTypeID)">{{item.ImgTypeName}}</td> -->
+              <td><router-link :to="'wonderfulImage/detail/'+item.ImgTypeID">{{item.ImgTypeName}}</router-link></td>
               <td>{{item.Img_List.length}}</td>
-              <td>
+              <!-- <td>
                 <a href="javascript:;" class="common_icon cmomon_mod_icon" @click="p(item)"></a>
-              </td>
+              </td> -->
               <td>
                 <a href="javascript:;" class="common_icon cmomon_del_icon" @click="deleteType(item)"></a>
               </td>
+              <td></td>
             </tr>
           </tbody>
         </table>
@@ -48,31 +50,39 @@
             <div class="img-upload">
               <div class="img">
                 <span>图片</span>
-                <el-upload :action="imgUploadUrl" list-type="picture-card" :on-preview="handlePictureCardPreview"
+                <el-upload :action="imgUploadUrl" list-type="picture-card" 
                   :on-remove="removeLog" 
                   :on-change='fileAdd'
                   :multiple="true" 
                   :http-request='uploadImg'
                   :file-list="d_imgList"
-                  :show-file-list="true"
+                  :show-file-list="true" 
                   class="upload">
                   <i class="el-icon-plus"></i>
                 </el-upload>
                 <el-dialog :visible.sync="dialogVisible" size="tiny">
                   <img width="100%" :src="dialogImageUrl" alt="">
                 </el-dialog>
+  
+                <div class="tips">*1,请上传jpg或png格式的图片。2,建议上传宽度大于1920px的图片</div>
               </div>
+              
               <button class="confirm" @click="confirm_upload" >确认</button>
             </div>
           </div>
         </div>
       </div>
+
+
+<!-- <img-detail></img-detail> -->
+
     </div>
   </div>
 </template>
 
 <script>
 import lrz from "../../../node_modules/lrz/dist/lrz.all.bundle";
+import imgDetail from "../wonderfulImage/wonderfulImageDetail"
 export default {
   name: "wonderfulImage",
   data() {
@@ -100,6 +110,10 @@ export default {
       }
     );
   },
+  components:{
+    imgDetail
+  }
+  ,
   methods: {
     show: function(msg) {
       console.log(msg);
@@ -123,27 +137,32 @@ export default {
     },
     uploadImg(request) {
       const file = request.file;
-      const fileName = request.file.name;
-      lrz(file, { width: 1920 })
-        .then(rst => {
-          console.log(rst);
-          const imgBase64 = {};
-          imgBase64.base64Str = rst.base64;
-          this.$http
-            .post(this.ApiUrl + "/me/File/File_Upload_Base64", imgBase64)
-            .then(
-              response => {
-                this.imgUrl += response.data.Data + ",";
-                console.log(this.imgUrl);
-              },
-              function() {
-                console.log("请求发送失败");
-              }
-            );
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      if (!/(.*)+\.(jpg|png)$/i.test(file.name)) {
+        alert("格式错误，请上传jpg或者png格式的图片");
+        return;
+      } else {
+        const fileName = request.file.name;
+        lrz(file, { width: 1920 })
+          .then(rst => {
+            console.log(rst);
+            const imgBase64 = {};
+            imgBase64.base64Str = rst.base64;
+            this.$http
+              .post(this.ApiUrl + "/me/File/File_Upload_Base64", imgBase64)
+              .then(
+                response => {
+                  this.imgUrl += response.data.Data + ",";
+                  console.log(this.imgUrl);
+                },
+                function() {
+                  console.log("请求发送失败");
+                }
+              );
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      }
     },
     fileAdd(file, fileList) {},
     confirm_upload() {
@@ -171,7 +190,7 @@ export default {
       this.ImgTypeID = obj.ImgTypeID;
       obj.Img_List.forEach(element => {
         this.d_imgList.push({
-          name: element.FileName,
+          name: element.NewFileName,
           url: element.FilePath,
           id: element.FileID
         });
@@ -194,9 +213,7 @@ export default {
           }
         );
     },
-    deleteTypeMul(){
-
-    },
+    deleteTypeMul() {},
     removeLog(obj) {
       console.log("delete", obj.id);
       const delImgID = { FileID: obj.id };
@@ -211,6 +228,10 @@ export default {
             console.log("请求发送失败");
           }
         );
+    },
+    imgDetail(id){
+      
+      console.log(id);
     }
   }
 };
@@ -246,7 +267,6 @@ export default {
   line-height: 40px;
   margin-top: 20px;
 }
-
 .imgUpload .content .title span {
   flex: 1;
   font-size: 14px;
@@ -269,6 +289,13 @@ export default {
   top: 10px;
   right: 16px;
   font-size: 18px;
+}
+.imgUpload .content .img-upload .img .tips{
+  color: #f00;
+  position: absolute;
+  bottom: 80px;
+  left: 120px;
+  font-size: 12px;
 }
 .imgUpload .content .img-upload .img .upload {
   flex: 8;
