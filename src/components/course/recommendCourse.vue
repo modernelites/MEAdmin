@@ -140,8 +140,9 @@ export default {
   methods: {
     //获取课程列表
     Course_List() {
+      console.log('1')
       this.$http
-        .get(this.ApiUrl + "/me/Course/Course_List?CourseTypeID=0")
+        .get(this.ApiUrl + "me/Course/Course_List?CourseTypeID=0")
         .then(
           response => {
             this.Course_Items = response.data.Data;
@@ -177,19 +178,19 @@ export default {
     },
     Course_RecommendImg_Edit() {
       this.Course_List();
-      // this.editimg = false;
-      // this.$http
-      //   .post(this.ApiUrl + "/me/Course/Course_Recomme_Set", this.Course)
-      //   .then(
-      //     response => {
-      //       //this.Course_Items = response.data.Data;
-      //       //this.Course_Items_Fillter = this.Course_Filler();
-      //       this.Course_List();
-      //     },
-      //     response => {
-      //       // error callback
-      //     }
-      //   );
+      this.editimg = false;
+      this.$http
+        .post(this.ApiUrl + "/me/Course/Course_Recomme_Set", this.Course)
+        .then(
+          response => {
+            //this.Course_Items = response.data.Data;
+            //this.Course_Items_Fillter = this.Course_Filler();
+            this.Course_List();
+          },
+          response => {
+            // error callback
+          }
+        );
     }
   },
   mounted() {

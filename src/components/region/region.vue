@@ -866,9 +866,9 @@
   .region{
     width: 100%;
   }
-  .region .common_area{
+  /* .region .common_area{ */
     /* display: flex; */
-  }
+  /* } */
   .region .common_area select.common_select
   {
     flex: 1;
@@ -877,9 +877,9 @@
   margin-left: 70px;
   margin-right: 0;
   }
-.region .ca_2 .common_i{
+/* .region .ca_2 .common_i{ */
   /* margin-right: 10px; */
-}
+/* } */
 .region .ca_2{
   margin-bottom: 0;
 }

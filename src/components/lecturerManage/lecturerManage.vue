@@ -188,9 +188,10 @@
     },
     methods: {
       Teacher_List: function () {
-        this.$http.get(this.ApiUrl + "/me/Teacher/Teacher_List?Teachers=").then(
+        this.$http.get(this.ApiUrl + "me/Teacher/Teacher_List?Teachers=").then(
           response => {
-            this.Teacher_Items = response.data.Data;
+            // debugger
+            this.Teacher_Items = response.data.Data[0];
           },
           response => {
             // error callback
@@ -209,7 +210,7 @@
           return;
         }
         this.$http
-          .post(this.ApiUrl + "/me/Teacher/Teacher_Edit", this.Teacher)
+          .post(this.ApiUrl + "me/Teacher/Teacher_Edit", this.Teacher)
           .then(
             response => {
               if (this.Teacher.TeacherID == 0) {
@@ -259,7 +260,7 @@
             title: "删除讲师"
           },
           function (id) {
-            http.post(ApiUrl + "/me/Teacher/Teacher_Del", param).then(
+            http.post(ApiUrl + "me/Teacher/Teacher_Del", param).then(
               response => {
                 obj.Teacher_List();
                 // layer.closeAll();

@@ -31,8 +31,8 @@
         UEDITOR_HOME_URL: URL
 
         // 服务器统一请求接口路径
-        , serverUrl: "http://172.16.0.111:2017/controller.ashx"
-
+        // , serverUrl: "http://172.16.0.222:2017/controller.ashx"
+        , serverUrl: URL+'ue'
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义
         , toolbars: [[
             'source', '|', 'undo', 'redo', '|',

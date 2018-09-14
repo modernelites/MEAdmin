@@ -113,9 +113,9 @@ export default {
   },
   methods: {
     Org_List: function() {
-      this.$http.get(this.ApiUrl + "/me/Organization/Organization_List").then(
+      this.$http.get(this.ApiUrl + "me/Organization/Organization_List").then(
         response => {
-          this.Org_Items = response.data.Data;
+          this.Org_Items = response.data.data[0];
         },
         response => {
           // error callback
@@ -142,7 +142,7 @@ export default {
       this.showOrgEdit = false;
       console.log(this.Org);
       this.$http
-        .post(this.ApiUrl + "/me/Organization/Organization_Edit", this.Org)
+        .post(this.ApiUrl + "me/Organization/Organization_Edit", this.Org)
         .then(
           response => {
             this.Org_List();
@@ -157,7 +157,7 @@ export default {
       let obj = this;
       obj.$layer.confirm("确定他要删除吗?", function() {
         obj.$http
-          .post(obj.ApiUrl + "/me/Organization/Organization_Del", m)
+          .post(obj.ApiUrl + "me/Organization/Organization_Del", m)
           .then(
             res => {
               obj.Org_List();

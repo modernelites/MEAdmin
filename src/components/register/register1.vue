@@ -461,11 +461,11 @@
         this.Course_Items_Fillter = this.Course_List_Fillter(m.CourseTypeID);
       },
       CourseType_List() {
-        this.$http.get(this.ApiUrl + "/me/CourseType/CourseType_List").then(
+        this.$http.get(this.ApiUrl + "me/CourseType/CourseType_List").then(
           response => {
-            response = response.data;
-            this.CourseType_Items = response.Data;
-            this.SelectCourseType = response.Data[0];
+            // response = response.data[0];
+            // this.CourseType_Items = response.Data;
+            // this.SelectCourseType = response.Data[0];
           },
           response => {
             console.log("请求发送失败");
@@ -475,11 +475,11 @@
       // 获取课程列表
       Course_List() {
         this.$http
-          .get(this.ApiUrl + "/me/Course/Course_List?CourseTypeID=0")
+          .get(this.ApiUrl + "me/Course/Course_List?CourseTypeID=0")
           .then(
             response => {
-              this.Course_Items = response.data.Data;
-              this.Course_Items_Fillter = this.Course_List_Fillter(1);
+              // this.Course_Items = response.data.Data[0];
+              // this.Course_Items_Fillter = this.Course_List_Fillter(1);
             },
             response => {
               console.log("请求发送失败");
@@ -498,10 +498,10 @@
       },
       // 获取期数列表
       Period_List() {
-        this.$http.get(this.ApiUrl + "/me/Period/Period_List?CourseID=0").then(
+        this.$http.get(this.ApiUrl + "me/Period/Period_List?CourseID=0").then(
           response => {
-            response = response.data;
-            this.Period_Items = response.Data;
+            // response = response.data[0];
+            // this.Period_Items = response.Data;
           },
           response => {
             console.log("请求发送失败");
@@ -561,7 +561,7 @@
           return;
         }
         this.$http
-          .post(this.ApiUrl + "/me/Course/CourseReg_Add", this.CourseReg)
+          .post(this.ApiUrl + "me/Course/CourseReg_Add", this.CourseReg)
           .then(
             response => {
               response = response.data;

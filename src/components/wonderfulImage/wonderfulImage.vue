@@ -3,8 +3,6 @@
     <div class="conmon_nav">
       <div class="right_area">
         <a href="javascript:;" class="cmomon_add_icon common_icon" @click="play=true" />
-        <!-- <a href="javascript:;" class="cmomon_mod_icon common_icon" />
-        <a href="javascript:;" class="cmomon_del_icon common_icon" @click="deleteTypeMul"/> -->
       </div>
     </div>
     <div class="common_wrapper">
@@ -23,15 +21,11 @@
           </thead>
           <tbody>
             <tr v-for="item in imgList" :key="item.index">
-              <td>
+             <td>
                 <input type="checkbox" name="imgTypeName" :value="item.ImgTypeID" >
               </td>
-              <!-- <td @click="imgDetail(item.ImgTypeID)">{{item.ImgTypeName}}</td> -->
               <td><router-link :to="'wonderfulImage/detail/'+item.ImgTypeID">{{item.ImgTypeName}}</router-link></td>
               <td>{{item.Img_List.length}}</td>
-              <!-- <td>
-                <a href="javascript:;" class="common_icon cmomon_mod_icon" @click="p(item)"></a>
-              </td> -->
               <td>
                 <a href="javascript:;" class="common_icon cmomon_del_icon" @click="deleteType(item)"></a>
               </td>
@@ -74,8 +68,6 @@
       </div>
 
 
-<!-- <img-detail></img-detail> -->
-
     </div>
   </div>
 </template>
@@ -100,8 +92,9 @@ export default {
     };
   },
   mounted() {
-    this.$http.get(this.ApiUrl + "/me/file/Images_List").then(
+    this.$http.get(this.ApiUrl + "me/file/Images_List").then(
       response => {
+        // debuggerj
         this.imgList = response.data.Data;
         console.log(this.imgList);
       },
@@ -126,10 +119,9 @@ export default {
     selectChange: function(val) {
       this.multipleSelection = val;
       console.log(this.multipleSelection);
-      // console.log(this.multipleSelection[0].name);
     },
     handleRemove(file, fileList) {
-      // console.log("remove", file, fileList);
+
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
@@ -148,7 +140,7 @@ export default {
             const imgBase64 = {};
             imgBase64.base64Str = rst.base64;
             this.$http
-              .post(this.ApiUrl + "/me/File/File_Upload_Base64", imgBase64)
+              .post(this.ApiUrl + "me/File/File_Upload_Base64", imgBase64)
               .then(
                 response => {
                   this.imgUrl += response.data.Data + ",";
@@ -172,7 +164,7 @@ export default {
       imgDetail.ImgTypeName = this.imgTypeName;
       console.log("detail", imgDetail);
       this.$http
-        .post(this.ApiUrl + "/me/File/Image_Add", imgDetail)
+        .post(this.ApiUrl + "me/File/Image_Add", imgDetail)
         .then(
           response => {
             console.log(response.body);
@@ -202,7 +194,7 @@ export default {
       console.log(item.ImgTypeID);
       const delTypeID = { ImgTypeID: item.ImgTypeID };
       this.$http
-        .post(this.ApiUrl + "/me/file/ImgType_Del", delTypeID)
+        .post(this.ApiUrl + "me/file/ImgType_Del", delTypeID)
         .then(
           response => {
             console.log(response.body);
@@ -218,7 +210,7 @@ export default {
       console.log("delete", obj.id);
       const delImgID = { FileID: obj.id };
       this.$http
-        .post(this.ApiUrl + "/me/File/Image_Del ", delImgID)
+        .post(this.ApiUrl + "me/File/Image_Del ", delImgID)
         .then(
           response => {
             console.log(response.body);
@@ -320,5 +312,8 @@ export default {
   font-weight: bold;
   font-size: 16px;
   border-radius: 10px;
+}
+tbody router-link{
+color: #000;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper">
-    <div class="conmon_nav">
+   <div class="conmon_nav">
       <div class="right_area">
         <a href="javascript:;" class="cmomon_add_icon common_icon" />
         <a href="javascript:;" class="cmomon_mod_icon common_icon" />
@@ -15,20 +15,19 @@
           <a href="javascript:;" class="cmomon_del_icon common_icon" v-show="del_display" @click="removeImg" />
         </div>
         <div class="common_content" >
-          <div class="content_wrapper" >
+          <div class="img_content_wrapper">
             <ul>
               <li v-for="item in imgUrlList">
-                <input type="checkbox" class="selectItem hide" :id="item.id" :value="item.id" v-model="selectImgs" >
-                <a href="javascript:;" @keydown.space.prevent="printInfo(item.id)">
+                <input type="checkbox" class="selectItem hide" :id="item.id" :value="item.id" v-model="selectImgs" />
+                <a href="javascript:;" @keydown.space.prevent="keyboardEvent(item.id)">               
                 <label :for="item.id">
                      <img :src="item.url" :alt="item.NewFileName" >
                 </label>
-                </a>
+                 </a>
               </li>
             </ul>
           </div>
-          <button @click="printImg,play=true">添加图片</button>
-          <!-- <button @click="imgDetail()">123</button> -->
+          <button id="addImg" @click="printImg,play=true">添加图片</button>
         </div>
       </div>
     </div>
@@ -55,7 +54,6 @@
         </div>
       </div>
     </div>
-
     <div class="msk img-detail" v-show="img_detail_display">
         <button @click="img_detail_display = false">x</button>
             <div class="img_detail_wrapper">
@@ -84,16 +82,22 @@ export default {
       dialogVisible: false,
       imgUploadUrl: "",
       img_detail_display:false,
-      img_detail_src:''
+      img_detail_src:'',
+      ImgTypeID:'',
+      SourceName:'',
+      FileIDs:[]
     };
   },
   mounted() {
-    this.$http.get(this.ApiUrl + "/me/file/Images_List").then(
+    this.$http.get(this.ApiUrl + "me/file/Images_List").then(
       response => {
         this.imgList = response.data.Data;
         this.imgList.forEach(ele => {
+          console.log(ele)
           if (ele.ImgTypeID == this.$route.params.id) {
             this.imgList = ele.Img_List;
+            this.SourceName = ele.HashCode;
+            this.ImgTypeID = ele.ImgTypeID;
             this.imgTypeName = ele.ImgTypeName;
           }
         });
@@ -101,8 +105,9 @@ export default {
           this.imgUrlList.push({
             name: ele.NewFileName,
             url: ele.FilePath,
-            id: ele.FileID
+            id: ele.FileID,
           });
+          this.FileIDs += ele.FileID + ',';
         });
       },
       response => {
@@ -123,9 +128,7 @@ export default {
     printImg() {
       console.log(this.selectImgs);
     },
-    printInfo(id) {
-    //   console.log(id);
-    //   console.log(this.imgUrlList);
+    keyboardEvent(id) {
       this.imgUrlList.forEach(ele=>{
           if (ele.id == id) {
              this.img_detail_src = ele.url;
@@ -142,10 +145,10 @@ export default {
           };
           console.log(delImgID);
           this.$http
-            .post(this.ApiUrl + "/me/File/Image_Del ", delImgID)
+            .post(this.ApiUrl + "me/File/Image_Del ", delImgID)
             .then(
               response => {
-                console.log(response.data);
+                // console.log(response.data);
                 console.log("删除图片成功");
               },
               function() {
@@ -154,12 +157,11 @@ export default {
             );
         });
         window.location.reload();
-      } else {
-      }
+      } 
     },
 
     handleRemove(file, fileList) {
-      // console.log("remove", file, fileList);
+
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url;
@@ -167,7 +169,7 @@ export default {
     },
     uploadImg(request) {
       const file = request.file;
-      //   console.log(file);
+      console.log(request);
       if (!/(.*)+\.(jpg|png)$/i.test(file.name)) {
         alert("格式错误，请上传jpg或者png格式的图片");
         return;
@@ -180,12 +182,16 @@ export default {
             console.log(rst);
             const imgBase64 = {};
             imgBase64.base64Str = rst.base64;
+            imgBase64.UserID = this.ImgTypeID;
+            imgBase64.SourceName = this.SourceName;
+            console.log(imgBase64);
             this.$http
-              .post(this.ApiUrl + "/me/File/File_Upload_Base64", imgBase64)
+              .post(this.ApiUrl + "me/File/File_Upload_Base64", imgBase64)
               .then(
                 response => {
                   this.imgUrl += response.data.Data + ",";
-                  console.log(this.imgUrl);
+                  this.FileIDs += response.data.Data.fileID + ","
+                  console.log(this.FileIDs);
                 },
                 function() {
                   console.log("请求发送失败");
@@ -195,22 +201,38 @@ export default {
           .catch(err => {
             console.log(err);
           });
+
+          //   this.$http
+          //     .post("http://localhost:8081/api/File/File_Upload", imgBase64)
+          //     .then(
+          //       response => {
+          //         this.imgUrl += response.data.Data + ",";
+          //         console.log(this.imgUrl);
+          //       },
+          //       function() {
+          //         console.log("请求发送失败");
+          //       }
+          //     );
+          // })
+          // .catch(err => {
+          //   console.log(err);
+          // });
       }
     },
     fileAdd(file, fileList) {},
     confirm_upload() {
       const imgDetail = {};
       imgDetail.ImgTypeID = this.$route.params.id;
-      imgDetail.FileIDs = this.imgUrl;
+      imgDetail.FileIDs = this.FileIDs;
       imgDetail.ImgTypeName = this.imgTypeName;
-      console.log("detail", imgDetail);
+    //   console.log("detail", imgDetail);
+    //  console.log(this.FileIDs)
       this.$http
-        .post(this.ApiUrl + "/me/File/Image_Add", imgDetail)
+        .post(this.ApiUrl + "me/File/Image_Add", imgDetail)
         .then(
           response => {
-            console.log(response.body);
             this.play = false;
-            window.location.reload();
+            // window.location.reload();
           },
           function() {
             console.log("请求发送失败");
@@ -236,8 +258,13 @@ export default {
       const delTypeID = {
         ImgTypeID: item.ImgTypeID
       };
-      this.$http
-        .post(this.ApiUrl + "/me/file/ImgType_Del", delTypeID)
+              this.$confirm('删除图集, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+         this.$http
+        .post(this.ApiUrl + "me/file/ImgType_Del", delTypeID)
         .then(
           response => {
             console.log(response.body);
@@ -247,6 +274,14 @@ export default {
             console.log("请求发送失败");
           }
         );
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+
+
     },
     removeLog(obj) {
       console.log("delete", obj.id);
@@ -254,7 +289,7 @@ export default {
         FileID: obj.id
       };
       this.$http
-        .post(this.ApiUrl + "/me/File/Image_Del ", delImgID)
+        .post(this.ApiUrl + "me/File/Image_Del ", delImgID)
         .then(
           response => {
             console.log(response.body);
@@ -265,7 +300,7 @@ export default {
           }
         );
     },
-    imgDetail(id) {
+    imgDetail(id) { 
       console.log(this.selectImgs);
     }
   }
@@ -290,14 +325,13 @@ export default {
   padding-top: 26px;
   margin-right: 13px;
 }
-
 .wrapper .common_wrapper .common_table .common_content {
   padding-top: 10px;
   width: 96%;
   margin: 0 auto;
 }
 
-.wrapper .common_wrapper .common_table .common_content .content_wrapper {
+.wrapper .common_wrapper .common_table .common_content .img_content_wrapper {
   height: 100%;
   position: relative;
   /* background-color: #fff; */
@@ -317,6 +351,7 @@ export default {
 
 .wrapper .common_wrapper .common_table .common_content li .selectItem:checked {
   display: block;
+
 }
 
 .wrapper .common_wrapper .common_table .common_content li img {
@@ -370,7 +405,6 @@ export default {
   line-height: 40px;
   margin-top: 20px;
 }
-
 .imgUpload .content .title span {
   flex: 1;
   font-size: 14px;

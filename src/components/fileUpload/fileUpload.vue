@@ -78,17 +78,24 @@
     methods: {
       fileUploadInit() {
         $("#fileUploadContent").initUpload({
-          "uploadUrl": "http://172.16.0.111:2017/me/file/File_Upload", //上传文件信息地址
-          //"progressUrl": "#", //获取进度信息地址，可选，注意需要返回的data格式如下（{bytesRead: 102516060, contentLength: 102516060, items: 1, percent: 100, startTime: 1489223136317, useTime: 2767}）
-          "showSummerProgress": false,//总进度条，默认限制
-          //"size":350,//文件大小限制，单位kb,默认不限制
-          "maxFileNumber": 1,//文件个数限制，为整数
-          //"filelSavePath":"",//文件上传地址，后台设置的根目录
-          //"beforeUpload":beforeUploadFun,//在上传前执行的函数
-          "onUpload": this.onUploadFun,//在上传后执行的函数
-          autoCommit: true,//文件是否自动上传
-          "fileType": ['png', 'jpg']//文件类型限制，默认不限制，注意写的是文件后缀
-        }),
+            //   "uploadUrl": "http://localhost:8081/me/file/File_Upload_base64", //上传文件信息地址
+            "uploadUrl": "http://172.16.0.222:8081/me/file/File_Upload_base64", //上传文件信息地址
+            //"progressUrl": "#", //获取进度信息地址，可选，注意需要返回的data格式如下（{bytesRead: 102516060, contentLength: 102516060, items: 1, percent: 100, startTime: 1489223136317, useTime: 2767}）
+            "showSummerProgress": false, //总进度条，默认限制
+            //"size":350,//文件大小限制，单位kb,默认不限制
+            "maxFileNumber": 1, //文件个数限制，为整数
+            //"filelSavePath":"",//文件上传地址，后台设置的根目录
+            //"beforeUpload":beforeUploadFun,//在上传前执行的函数
+            "onUpload": this.onUploadFun, //在上传后执行的函数
+            autoCommit: true, //文件是否自动上传
+            "fileType": ['png', 'jpg'], //文件类型限制，默认不限制，注意写的是文件后缀
+            'data': 'imgBase64',
+            'dataType': 'json',
+            'crossDomain': true,
+            'xhrFields': {
+              withCredentials: true
+            },
+          }),
           function beforeUploadFun(opt) {
             //opt.otherData = [{ "name": "你要上传的参数", "value": "你要上传的值" }];
           }
@@ -113,7 +120,7 @@
     },
     mounted() {
       this.fileUploadInit();
-    //   console.log(this.FilePath)
+      //   console.log(this.FilePath)
     }
   }
 
@@ -126,4 +133,5 @@
     width: 80%;
     margin: 20px auto;
   }
+
 </style>

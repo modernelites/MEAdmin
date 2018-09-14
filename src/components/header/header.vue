@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="head">
     <div class="content_wrapper clearfix">
       <div class="content_left">
         <img class="logo" src="./../../assets/img/logoWhite@2x.png" alt="bg-logo" width="50" height="40">
@@ -9,20 +9,34 @@
         <input type="text" name="text" class="text_input">
         <img src="./../../assets/img/search@2x.png" alt="search" class="search_icon">
         <span class="dep">{{department}}</span>
-        <button type="button" class="button out_btn">退出登录</button>
+        <button type="button" @click="logOut()" class="button out_btn">退出登录</button>
       </div>
     </div>
   </div>
 </template>
 <script>
   export default {
-    name: 'header',
+    name: 'head',
     data() {
       return {
         loginType: '',
         department: ''
       }
     },
+    methods: {
+      logOut() {
+            // this.$http.post(this.ApiUrl + 'me/Account/Logout').then((response) => {
+            //   console.log(response)
+            // }, function (err) {
+            //   console.log('请求发送失败', err);
+            // });
+        localStorage.removeItem('user')
+        this.$router.push({
+          path: '/'
+        });
+      }
+    },
+
     mounted() {
       let _this = this;
       eventBus.$on("loginType", function (val) {
@@ -44,7 +58,7 @@
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-  .header {
+  .head {
     /*max-width: 1440px;*/
     margin: 0 auto;
     background: linear-gradient(90deg, #008ae5, #078ee7);

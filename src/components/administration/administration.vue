@@ -4,20 +4,25 @@
     <div class="admin">
       <div class="content_wrapper">
         <div class="content_left">
-          <ul class="list" v-for="item in course_list" :key="item.index">
+          <ul class="list" v-for="item in course" :key="item.index">
             <li class="item" :class="{'active':selectType === item.index}">
-              <router-link to="" >{{item.CourseName}}</router-link>
+              <span @click="passValue(item.CourseID,1)">{{item.CourseName}}</span>
               <ul>
-                <li v-for="item in item.stage" :key='item.index' @click="log(item.index)" class="courseStage">{{item.value}}</li>
+                <li v-for="i in item.period" :key='i.index' @click="passValue(item.CourseID,2,i.PeriodID,i.PeriodNum)" class="courseStage">第{{i.PeriodNum}}期</li>
               </ul>
             </li>
           </ul>
+
         </div>
         <div class="content_right">
           <div class="common_nav">
             <ul class="common_left">
               <li @click="type(item.id)" class="common_item" :class="{'active':courseType === item.id}" v-for="item in nav_list" :key="item.index">
                 <a href="javascript:;">{{item.value}}</a>
+              </li>
+              <li>
+                <el-cascader expand-trigger="hover" :options="displayList" v-model="selectedOptions2" @change="handleChange">
+                </el-cascader>
               </li>
             </ul>
             <div class="common_right">
@@ -31,11 +36,6 @@
 
           <!-- 信息列表 -->
           <div class="common_right_detail">
-            <admin-detail></admin-detail>
-            <admin-detail></admin-detail>
-            <admin-detail></admin-detail>
-            <admin-detail></admin-detail>
-            <admin-detail></admin-detail>
             <admin-detail></admin-detail>
           </div>
 
@@ -53,151 +53,18 @@
   import myHeader from "@/components/header/header";
   import adminDetail from "@/components/administration/adminDetail";
   import enrol from "@/components/enrol/enrol";
+  import index from 'vue';
   export default {
     name: "administration",
     data() {
+      const item = {};
       return {
-
+        tableData: Array(20).fill(item),
         selectType: 0,
         courseType: 0,
+        course: [],
+        periodList: [],
         display: false,
-        courses: [{
-            value: "摩英青少年领袖特训营",
-            index: 0,
-            stage: [{
-                value: "stage1",
-                index: 0.0
-              },
-              {
-                value: "stage2",
-                index: 0.1
-              },
-              {
-                value: "stage3",
-                index: 0.2
-              }
-            ]
-          },
-          {
-            value: "智慧家长",
-            index: 1,
-            stage: [{
-                value: "stage1",
-                index: 1.0
-              },
-              {
-                value: "stage2",
-                index: 1.1
-              },
-              {
-                value: "stage3",
-                index: 1.2
-              }
-            ]
-          },
-          {
-            value: "摩英性格分析",
-            index: 2,
-            stage: [{
-                value: "stage1",
-                index: 2.0
-              },
-              {
-                value: "stage2",
-                index: 2.1
-              },
-              {
-                value: "stage3",
-                index: 2.2
-              }
-            ]
-          },
-          {
-            value: "摩英超级记忆力",
-            index: 3,
-            stage: [{
-                value: "stage1",
-                index: 3.0
-              },
-              {
-                value: "stage2",
-                index: 3.1
-              },
-              {
-                value: "stage3",
-                index: 3.2
-              }
-            ]
-          },
-          {
-            value: "摩英学习力特训营",
-            index: 4,
-            stage: [{
-                value: "stage1",
-                index: 4.0
-              },
-              {
-                value: "stage2",
-                index: 4.1
-              },
-              {
-                value: "stage3",
-                index: 4.2
-              }
-            ]
-          },
-          {
-            value: "摩英梦想风暴",
-            index: 5,
-            stage: [{
-                value: "stage1",
-                index: 5.0
-              },
-              {
-                value: "stage2",
-                index: 5.1
-              },
-              {
-                value: "stage3",
-                index: 5.2
-              }
-            ]
-          },
-          {
-            value: "摩英全脑开发",
-            index: 6,
-            stage: [{
-                value: "stage1",
-                index: 6.0
-              },
-              {
-                value: "stage2",
-                index: 6.1
-              },
-              {
-                value: "stage3",
-                index: 6.2
-              }
-            ]
-          },
-          {
-            value: "摩英领袖风暴",
-            index: 7,
-            stage: [{
-                value: "stage1",
-                index: 7.0
-              },
-              {
-                value: "stage2",
-                index: 7.1
-              },
-              {
-                value: "stage3",
-                index: 7.2
-              }
-            ]
-          }
-        ],
         nav_list: [{
             value: "支付完成",
             id: 0
@@ -211,88 +78,259 @@
             id: 2
           },
           {
-            value: "学校",
+            value: "身份",
             id: 3
           },
           {
-            value: "身份",
-            id: 4
-          },
-          {
             value: "地区",
-            id: 5
+            id: 4
           }
         ],
         multipleSelection: [],
-        course_list:[]
+        course_list: [],
+        options: [],
+        ageList: [],
+        areaList: [],
+        selectedOptions: [],
+        selectedOptions2: [],
+        displayList: [{
+          label: '已付款',
+          value: 'is_fine_true'
+        }, {
+          label: '未付款',
+          value: 'is_fine_false'
+        }]
       };
     },
+
     components: {
       myHeader,
       adminDetail,
       enrol
     },
     methods: {
+      handleChange(value) {
+        eventBus.$emit("selectedValue", value[0]);
+      },
       type: function (num) {
+        // console.log()
         this.courseType = num;
+        if (num === 0) {
+          this.displayList = [{
+            label: '已付款',
+            value: 'is_fine_true'
+          }, {
+            label: '未付款',
+            value: 'is_fine_false'
+          }]
+        } else if (num === 1) {
+          this.displayList = [{
+            label: '已联系',
+            value: 'is_contact_true'
+          }, {
+            label: '未联系',
+            value: 'is_contact_false'
+          }]
+        } else if (num === 2) {
+          this.displayList = this.ageList;
+        } else if (num === 3) {
+          this.displayList = [{
+            label: '老学员',
+            value: 'is_old_true'
+          }, {
+            label: '新学员',
+            value: 'is_old_false'
+          }]
+        } else if (num === 4) {
+          this.displayList = this.areaList;
+        }
         eventBus.$emit("courseType", num);
-        // console.log("courseType", this.courseType);
       },
       log: function (item) {
         this.selectType = item;
-        // console.log("selectType", this.selectType);
         eventBus.$emit("course", item);
       },
-      print: function (str) {
-        console.log(str);
-      },
+      print: function (str) {},
       enrolDisplay: function (state) {
         this.display = state;
         eventBus.$emit("enrolDisplay", state);
       },
       getPeriod: function (CourseID) {
-        console.log('1',this.course_list[0]);
-        this.$http.get(this.ApiUrl + "/me/Period/Period_List?CourseID=0").then(
+        let id = CourseID ? CourseID : 1
+        this.$http.get(this.ApiUrl + "me/Period/Period_List_All?Type=" + id).then(
           response => {
-            // console.log('period');
-            // console.log(response.data.Data)
-            response.data.Data.forEach(element => {
-              // console.log(element.CourseID);
-            })
+            this.periodList = response.data.Data[0];
           },
           response => {
-            // error callback
             console.log('period error');
           }
         );
       },
       getClass: function () {
-        this.$http.get(this.ApiUrl + "/me/Course/Course_List?CourseTypeID=1").then(
+        this.$http.get(this.ApiUrl + "me/Course/Course_List?CourseTypeID=1").then(
           response => {
-            this.course_list = response.data.Data;
-            // console.log(this.course_list);
-            this.course_list.forEach(element => {
-              // console.log(element.CourseID);
-            });
-},
+            let temp = response.data.Data;
+            this.course = temp;
+            let period = this.periodList
+            var map = {},
+              dest = [];
+            for (var i = 0; i < period.length; i++) {
+              var ai = period[i];
+              if (!map[ai.CourseID]) {
+                dest.push({
+                  CourseID: ai.CourseID,
+                  data: [ai]
+                });
+                map[ai.CourseID] = ai;
+              } else {
+                for (var j = 0; j < dest.length; j++) {
+                  var dj = dest[j];
+                  if (dj.CourseID == ai.CourseID) {
+                    dj.data.push(ai);
+                    break;
+                  }
+                }
+              }
+            }
+            this.course.forEach((e) => {
+              dest.forEach((f) => {
+                if (e.CourseID == f.CourseID) {
+                  e.period = f.data;
+                }
+              })
+            })
+            console.log(this.course)
+          },
           response => {
-            // error callback
             console.log('class error');
           }
         );
+      },
+      passValue(i, type, p, pnum) { //iCourseID  type 1course 2Period  p期数id pnum期数num
+        eventBus.$emit("CourseID", [i, p]);
+        this.course.forEach((e) => {
+          if (e.CourseID === i) {
+            if (pnum) {
+              eventBus.$emit("CourseName", [e.CourseName, pnum]);
+            } else {
+              eventBus.$emit("CourseName", [e.CourseName]);
+            }
+          }
+        })
+      },
+      sortNumber(a, b) {
+        return a - b;
       }
     },
+    beforeUpdate() {
+      let _this = this
+      eventBus.$emit("loginType", 0);
+      eventBus.$on("ageList", function (val) {
+        _this.ageList = [];
+        val.forEach((e, index) => {
+          let temp = {
+            value: e,
+            label: e
+          }
+          _this.ageList.push(temp)
+        })
+      });
+      eventBus.$on("areaList", function (val) {
+        _this.areaList = [];
+        val.forEach((e, index) => {
+          let temp = {
+            value: e,
+            label: e
+          }
+          _this.areaList.push(temp)
+        })
+      });
+    },
     mounted() {
-      this.getClass();
-      this.getPeriod();
-            eventBus.$emit("loginType", 0);
-    }
+      //权限验证
+      // if (window.localStorage.getItem('user')) {
+      //   let url = "/index",
+      //     user = JSON.parse(window.localStorage.getItem('user'));
+      //   console.log(user.DEP)
+      //   switch (user.DEP) {
+      //     case "1":
+      //       url = "/management";
+      //       break;
+      //     case "2":
+      //       url = "/teaching";
+      //       break;
+      //     case "0":
+      //       url = "/administration";
+      //   }
+      //   this.$router.push({
+      //     path: url
+      //   });
+      // } else {
+      //   this.$router.push({
+      //     path: "/index"
+      //   });
+      // }
+      // this.getPeriod();
+      // this.getClass()
+      let periodID, periodN;
+      var map = {},
+        dest = [];
+      this.$http.get(this.ApiUrl + "me/Period/Period_List_All?Type=1").then(
+        response => {
+          this.periodList = response.data.Data[0];
+        },
+        response => {
+          console.log('period error');
+        }
+      );
+      this.$http.get(this.ApiUrl + "me/Course/Course_List?CourseTypeID=1").then(
+        response => {
+          let temp = response.data.Data;
+          this.course = temp;
+          let period = this.periodList
 
+          for (var i = 0; i < period.length; i++) {
+            var ai = period[i];
+            if (!map[ai.CourseID]) {
+              dest.push({
+                CourseID: ai.CourseID,
+                data: [ai]
+              });
+              map[ai.CourseID] = ai;
+            } else {
+              for (var j = 0; j < dest.length; j++) {
+                var dj = dest[j];
+                if (dj.CourseID == ai.CourseID) {
+                  dj.data.push(ai);
+                  break;
+                }
+              }
+            }
+          }
+          this.course.forEach((e) => {
+            dest.forEach((f) => {
+              if (e.CourseID == f.CourseID) {
+                e.period = f.data;
+              }
+            })
+          })
+        },
+        response => {
+          console.log('class error');
+        }
+      );
+
+    },
+    beforeDestroy() {
+      eventBus.$off('areaList')
+      eventBus.$off('ageList')
+    }
   }
 
 </script>
 
-<style>
+<style lang="scss">
+  // @import url("../../../static/css/reset.scss");
   .admin .content_wrapper {
     display: flex;
     height: calc(100vh - 80px);
@@ -304,28 +342,27 @@
     padding-top: 44px;
   }
 
-  .admin .content_wrapper .content_left .list li a {
+  .admin .content_wrapper .content_left .list li span {
+    box-sizing: border-box;
     display: block;
     height: 60px;
-    line-height: 60px;
+    padding-top: 10%;
+    padding-left: 8px;
+    padding-right: 8px;
     color: #fff;
     font-size: 16px;
     font-weight: 300;
     text-align: center;
-    border-left: 8px solid transparent;
+    border-left: 8px solid transparnt;
     transition: all.3s ease;
+    margin-bottom: 19px;
   }
 
   .admin .content_wrapper .content_left li.item {
     height: 60px;
   }
 
-  .admin .content_wrapper .content_left li.active a {
-    border-left: 8px solid #063a5d;
-    background: #0c75ba;
-  }
-
-  .admin .content_wrapper .content_left li:hover a {
+  .admin .content_wrapper .content_left li:hover span {
     border-left: 8px solid #063a5d;
     background: #0c75ba;
   }
@@ -334,12 +371,13 @@
     display: none;
     position: relative;
     left: 200px;
-    top: -48px;
-    background-color: #078ee7;
+    top: -82px;
+    background-color: #fff;
     z-index: 10;
-    color: #fff;
-    padding-left: 10px;
-    width: 150px;
+    color: #0581d4;
+    width: 110px;
+    text-align: center;
+    cursor: pointer;
   }
 
   .admin .content_wrapper .content_left .list .item ul li {
@@ -348,7 +386,8 @@
   }
 
   .admin .content_wrapper .content_left li .courseStage:hover {
-    color: #f00;
+    // color: #f00;
+    background-color: #efefef;
   }
 
   .admin .content_wrapper .content_left li:hover ul {
@@ -477,6 +516,19 @@
     width: 14px;
     height: 14px;
     display: block;
+  }
+
+  .el-table td,
+  .el-table th.is-leaf {
+    border: none;
+  }
+
+  .el-table--striped .el-table__body tr.el-table__row--striped td {
+    background-color: #fff;
+  }
+
+  tbody tr:nth-child(n) {
+    background-color: #efefef;
   }
 
 </style>

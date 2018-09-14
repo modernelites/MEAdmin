@@ -24,7 +24,7 @@ export default new Router({
   routes: [{
       path: '/',
       name: 'index',
-      redirect:'/index',
+      redirect: '/index',
       component: index
     },
     {
@@ -33,15 +33,15 @@ export default new Router({
       component: index,
     },
     {
-      path:'/administration',
-      name:'administration',
-      component:administration,
+      path: '/administration',
+      name: 'administration',
+      component: administration,
       // children:[{}]
     },
     {
-      path:'/teaching',
-      name:'teaching',
-      component:teaching,
+      path: '/teaching',
+      name: 'teaching',
+      component: teaching,
     },
     {
       path: '/management',
@@ -85,14 +85,13 @@ export default new Router({
         }, {
           path: 'organization',
           component: organization
-        },{
-          path:'wonderfulImage',
-name:'wonderfulImage',
-          component:wonderfulImage
-        }
-        ,{
-          path:'wonderfulImage/detail/:id',
-          component:wonderfulImageDetail
+        }, {
+          path: 'wonderfulImage',
+          name: 'wonderfulImage',
+          component: wonderfulImage
+        }, {
+          path: 'wonderfulImage/detail/:id',
+          component: wonderfulImageDetail
         }
       ]
     }

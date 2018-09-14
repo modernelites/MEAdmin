@@ -98,9 +98,33 @@
         if (url.indexOf("wonderfulImage") > 0) {
           this.selectType = 10;
         }
+
       }
     },
     mounted() {
+      //权限验证
+      // if (window.localStorage.getItem('user')) {
+      //   let url = "/index",
+      //     user = JSON.parse(window.localStorage.getItem('user'));
+      //   console.log(user.DEP)
+      //   switch (user.DEP) {
+      //     case "1":
+      //       url = "/management";
+      //       break;
+      //     case "2":
+      //       url = "/teaching";
+      //       break;
+      //     case "0":
+      //       url = "/administration";
+      //   }
+      //   this.$router.push({
+      //     path: url
+      //   });
+      // } else {
+      //   this.$router.push({
+      //     path: "/index"
+      //   });
+      // }
       this.selectUrl();
       eventBus.$emit("loginType", 1);
     }
@@ -108,7 +132,8 @@
 
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style>
+<style lang="scss">
+  // @import url("../../../static/css/reset.scss");
   .home {
     /*max-width: 1440px;*/
     margin: 0 auto;

@@ -19,16 +19,39 @@ Vue.use(ElementUI)
 Vue.use(Element, { size: 'small' })
 // layer
 Vue.prototype.$layer = layer(Vue);
-Vue.prototype.$http = axios
-Vue.config.productionTip = false
+Vue.prototype.$http = axios;
+axios.defaults.withCredentials = true;
+Vue.config.productionTip = false;
 // api地址
-Vue.prototype.ApiUrl = 'http://172.16.0.111:2017'
+// Vue.prototype.ApiUrl = 'http://localhost:8081/'
+// Vue.prototype.ApiUrl = 'http://172.16.0.222:8081/'
+// Vue.prototype.ApiUrl = 'http://172.16.0.222:2017'
+Vue.prototype.ApiUrl = 'http://www.myjy.biz:8081/'
 
 
 
 
 
-
+Date.prototype.format = function(fmt) { 
+  var o = { 
+     "M+" : this.getMonth()+1,                 //月份 
+     "d+" : this.getDate(),                    //日 
+     "h+" : this.getHours(),                   //小时 
+     "m+" : this.getMinutes(),                 //分 
+     "s+" : this.getSeconds(),                 //秒 
+     "q+" : Math.floor((this.getMonth()+3)/3), //季度 
+     "S"  : this.getMilliseconds()             //毫秒 
+ }; 
+ if(/(y+)/.test(fmt)) {
+         fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length)); 
+ }
+  for(var k in o) {
+     if(new RegExp("("+ k +")").test(fmt)){
+          fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));
+      }
+  }
+ return fmt; 
+}        
 
 
 
